@@ -1,3 +1,10 @@
 body{
-    margin: 0px;
+    margin: 25px;
+}
+
+.col{
+    margin-top: 5px;
+}
+.button{
+    margin-top: 5px;
 }
