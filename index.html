@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <!-- Обязательные метатеги -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.8/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+
+    <title>Привет мир!</title>
+  </head>
+  <body>
+    <div id="app">
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+                <a class="navbar-brand" href="#"><h1>{{ sitename }}</h1></a>
+                <a name="" id="" class="btn btn-secondary" role="button" v-on:click="showChekout">
+                    <span class="navbar-text justify-contentfa-right"> Корзина<span class="badge badge-dark" style="margin-left: 5px;">{{ cartItemCounter }}</span>
+                </a>
+
+                
+            </nav>
+        </header>
+        <main>
+            <div class="row product">
+                <div v-if = "showProduct">
+                    <div class="col">
+                        <figure>
+                            <img v-bind:src="product.image" alt="Cat food">
+                        </figure>
+                    </div>
+                    <div class="col col-expand">
+                        <h1>{{ product.title }}</h1>
+                        <p v-html ="product.description"></p>
+                        <p class="price">
+                            {{ product.price | formatPrice}}
+                        </p>
+                        <button type="button" class="btn btn-primary" v-on:click="addToCart" v-if="canAddToCart">
+                            Add to cart
+                        </button>
+                        <button type="button" class="btn btn-secondary" v-else="canAddToCart">
+                            Add to cart
+                        </button>
+                    </div>
+                </div>
+
+                <div v-else>
+                    <div class="row">
+                        <h4><strong>Enter Your Information</strong></h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>First Name:</strong>
+                            <input v-model="order.firstName" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Last Name:</strong>
+                            <input v-model="order.lastName" class="form-control"> 
+                        </div>
+                        <div class="col-md-12"><strong>Adress</strong></div>
+                        <div class="col-md-12"><input v-model="order.address" class="form-control"></div>
+                        <div class="col-md-12"><strong>City</strong></div>
+                        <div class="col-md-12"><input v-model="order.city" class="form-control"></div>
+                        <div class="col-md-2"> 
+                            <strong>State</strong>
+                            <select v-model="order.state" class="form-control">
+                                <option disabled value="">State</option>
+                                <option>AL</option>
+                                <option>AR</option>
+                                <option>CA</option>
+                                <option>NV</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 col-md-offset-4">
+                            <strong>Zip / Postal Code</strong>
+                            <input v-model="order.zip" class="form-control">
+                        </div>
+
+                            <div class="col-md-6">
+                                <a class="btn btn-primary"  v-on:click="submitForm">
+                                    Place Order
+                                </a>
+                            </div>
+
+                        <div class="col-md-12 verify">
+                            <pre>
+                                First Name: {{order.firstName}}
+                                Last Name: {{ order.lastName}}
+                                Address: {{order.address}}
+                                City: {{ order.city}}
+                                State: {{order.state}}
+                                ZIP: {{ order.zip}}
+                            </pre>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </main>
+    </div>
+
+    <script type="text/javascript">
+        var webstore = new Vue({
+            el:'#app',
+            data:{
+                showProduct: true, 
+                sitename: 'Vue JS pet Project',
+                product:{
+                    id: 1001,
+                    title: "Cat food",
+                    description: "А 25 pound bag of <em>irresistible</em>, "+ 
+                                "organic goodness for your cat.",
+                    price: 2000,
+                    image: '',
+                    availaЬleinventory: 5
+                },
+                cart: [],
+                order:{
+                    firstName: '',
+                    lastName: '',
+                    address:'',
+                    city:'',
+                    zip:'',
+                    state:''
+                }
+            },
+            computed:{
+                cartItemCounter: function(){
+                    return this.cart.length || '';
+                },
+                canAddToCart: function(){
+                    return this.product.availaЬleinventory > this.cartItemCounter;
+                }
+            },
+            filters:{
+                    formatPrice: function(price){
+                        if (!parseInt(price)) {return "";}
+                        if (price > 999999) {
+                            var priceString = (price/100).toFixed(2);
+                            var priceArray = priceString.split("").reverse();
+                            var index = 3;
+                            while (priceArray.length > index+3){
+                                priceArray.splice(index+3, 0, ",");
+                                index +=4;
+                            } return "$" + priceArray.reverse().join("");
+                        } 
+                        else{
+                            return "$" + (price/100).toFixed(2);
+                        }
+                    }
+                },
+            methods: {
+                addToCart: function() {
+                    this.cart.push( this.product.id );
+                },
+
+                showChekout() {
+                    this.showProduct = this.showProduct ? false : true;
+                },
+
+                submitForm(){
+                    alert('Submitted');
+                }
+            },
+
+        });
+    </script>
+
+
+    </body>
+</html>
